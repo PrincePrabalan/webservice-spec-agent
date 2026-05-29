@@ -1,0 +1,158 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "E-Commerce API",
+    "version": "1.0.0",
+    "description": "Complete e-commerce platform API with user management, product catalog, and order processing",
+    "contact": {
+      "name": "API Support",
+      "email": "api@ecommerce.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.ecommerce.com",
+      "description": "Production Server"
+    },
+    {
+      "url": "https://staging.ecommerce.com",
+      "description": "Staging Server"
+    }
+  ],
+  "paths": {
+    "/products": {
+      "get": {
+        "summary": "List all products",
+        "tags": ["products"],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of products"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new product",
+        "tags": ["products"],
+        "responses": {
+          "201": {
+            "description": "Product created"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "summary": "List user orders",
+        "tags": ["orders"],
+        "responses": {
+          "200": {
+            "description": "List of orders"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new order",
+        "tags": ["orders"],
+        "responses": {
+          "201": {
+            "description": "Order created"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "category": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name", "price"]
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": "integer"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          },
+          "total": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "processing", "shipped", "delivered"]
+          }
+        },
+        "required": ["id", "user_id", "products", "total"]
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ]
+}
